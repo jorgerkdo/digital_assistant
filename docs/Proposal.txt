@@ -1,0 +1,44 @@
+Framestore's Digital Assistant 
+
+
+
+Interactive assistant for different needs
+
+
+
+1)Timesheet Loger
+Create a CSV file with the inputted hours
+
+Start-End hour
+Lunch ?
+
+
+Offers:
+Overtime Calculator
+Logs from times 
+
+Rough idea:
+
+Asks for Day
+
+Start Hour
+End Hour
+Did you worked through lunch?
+Time logged!
+
+Updates CSV File
+
+Needs:
+Display weekly local time sheet
+modify day time 
+
+
+
+Weekly Targets
+
+Check targets providing feedback based on the department and dependancies, like shot statuses etc..
+
+Check Daily Targets 
+Check weekly Targets
+
+Maybe analyze when was the latest comp vs the latest lighting in case there's new lighting approved 
