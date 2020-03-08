@@ -1,3 +1,8 @@
+import csv
+from datetime import datetime
+import time_sheet_manager
+from time_sheet_manager import *
+
 #Framestore Digitals Assistant
 
 def main_menu():
@@ -46,7 +51,7 @@ def time_sheet():
 
 		2) Display timesheet
 
-		3) Update Time Sheet
+		3) Update Day Time Sheet
 
 		Other Options:
 		menu 
@@ -63,6 +68,28 @@ def time_sheet():
 
 		action = raw_input(prompt)
 		started = 'started'
+
+
+		if action == '1':
+			confirmation = raw_input('[y/n]>')
+			if confirmation == 'y':
+				time_sheet_manager.write_new()
+				update_total_hours()
+				time_sheet_manager.display_timesheet()
+
+		if action == '2':
+			update_total_hours()
+			time_sheet_manager.display_timesheet()
+
+
+		if action == '3':
+			day = raw_input('Day:')
+			time_in = raw_input('Time in:')
+			time_out = raw_input('Time Out:')
+			lunch = raw_input('Did you work through lunch?[y/n]>')
+			time_sheet_manager.write_day(day,time_in,time_out,lunch)
+			update_total_hours()
+			time_sheet_manager.display_timesheet()
 
 		if action == 'menu':
 			print(timesheet_menu)
