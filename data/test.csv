@@ -1,6 +1,8 @@
 day,in,out,lunch,total hours
 Monday,9:00,18:00,n,8.00
 Tuesday,9:00,18:00,n,8.00
-Wednesday,8:00,21:00,n,12.00
+Wednesday,23:54,18:00,n,error
 Thursday,9:00,18:00,n,8.00
 Friday,9:00,18:00,n,8.00
+Saturday,0:00,00:00,n,0.0
+Sunday,0:00,00:00,n,0.0

@@ -1,5 +1,7 @@
+import datetime
+from datetime import *
 import csv
-from datetime import datetime
+import re
 
 def read_timesheet():
 	with open('../data/test.csv') as csv_file:
@@ -23,14 +25,29 @@ def read_timesheet():
 					s3 = '01:00'
 
 				format = '%H:%M'
-				time = datetime.strptime(s2, format) - datetime.strptime(s1, format)
-				time = str(time)
-				time = time.split(':')
-				time = time[0]+':'+time[1]
-				time = datetime.strptime(time, format) - datetime.strptime(s3, format)
-				time = str(time)
-				time = time.split(':')
-				row[4] = time[0]+'.'+time[1]
+				
+				if datetime.strptime(s2, format) > datetime.strptime(s1, format):
+					time = datetime.strptime(s2, format) - datetime.strptime(s1, format)
+
+					time = str(time)
+					time = time.split(':')
+					time = time[0]+':'+time[1]
+
+					if datetime.strptime(time,format)> datetime.strptime(s3, format):
+						time = datetime.strptime(time, format) - datetime.strptime(s3, format)
+					else:
+						pass
+					
+					time = str(time)
+					time = time.split(':')
+					row[4] = time[0]+'.'+time[1]
+				else:
+
+					if row[1]== '0:00' or row[2] == '0:00':
+						row[4] = '0.0'
+					else:
+						row[4] = 'error'
+
 				info_holder.append(row)
 	
 		return info_holder
@@ -44,17 +61,6 @@ def update_total_hours():
 			csv_writer.writerow(row)
 	return info_holder
 
-def write_timesheet():
-
-	info_holder = read_timesheet()
-	with open('../data/employee_file2.csv', mode='w') as csv_file:
-		fieldnames = ['emp_name', 'dept', 'birth_month']
-		writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
-		writer.writeheader()
-		writer.writerow({'emp_name': 'John Smith', 'dept': 'Accounting', 'birth_month': 'November'})
-		writer.writerow({'emp_name': 'Erica Meyers', 'dept': 'IT', 'birth_month': 'March'})
-
 
 def write_day(day, time_in,time_out,lunch):
 
@@ -64,8 +70,8 @@ def write_day(day, time_in,time_out,lunch):
 		csv_writer= csv.writer(csv_file)
 		for row in info_holder:
 		
-			if row[0] == day:
-				row_update = [day, time_in, time_out,lunch,'0:00']
+			if row[0].lower() == day.lower():
+				row_update = [row[0], time_in, time_out,lunch,'0:00']
 				csv_writer.writerow(row_update)
 			else:
 				csv_writer.writerow(row)
@@ -78,16 +84,86 @@ def write_new():
 		fieldnames = ['day','in','out','lunch','total hours']
 		writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 		writer.writeheader()
-		days = ['Monday','Tuesday','Wednesday','Thursday','Friday']
+		days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 		for i in days:
-			writer.writerow({'day': i, 'in': '9:00', 'out': '18:00','lunch':'n','total hours':'0'})
+			if i == 'Saturday' or i == 'Sunday':
+				writer.writerow({'day': i, 'in': '0:00', 'out': '00:00','lunch':'n','total hours':'0'})
+			else:
+				writer.writerow({'day': i, 'in': '9:00', 'out': '18:00','lunch':'n','total hours':'0'})
 
 
 def display_timesheet():
 	info_holder = read_timesheet()
+	worked_hours = 0.00
 	for i in info_holder:
 		print (i)
+	counter = 0
+	for i in info_holder:
+		
+		if counter == 0:
+			pass
+		else:
+			try:
+				worked_hours = worked_hours+ (float(i[4]))
+			except:
+				pass
 
+
+		counter = counter + 1 
+		
+	print ('Week Total Hours: ' + str(worked_hours))
+
+
+def checkin():
+
+
+
+	weekDays = ("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")
+
+	date_today = date.today()
+	day_today = date_today.weekday()
+	now_today= datetime.now()
+	time_today= now_today.strftime("%H:%M")
+	weekday_today = weekDays[day_today]
+	info_holder = read_timesheet()
+
+	
+	with open('../data/test.csv', "w") as csv_file:
+		
+		csv_writer= csv.writer(csv_file)
+		for row in info_holder:
+		
+			if row[0].lower() == weekday_today.lower():
+				row_update = [row[0], time_today, row[2] , row[3],row[4]]
+				csv_writer.writerow(row_update)
+			else:
+				csv_writer.writerow(row)
+	
+def checkout():
+
+
+
+	weekDays = ("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")
+
+	date_today = date.today()
+	day_today = date_today.weekday()
+	now_today= datetime.now()
+	time_today= now_today.strftime("%H:%M")
+	weekday_today = weekDays[day_today]
+	info_holder = read_timesheet()
+
+	
+	with open('../data/test.csv', "w") as csv_file:
+		
+		csv_writer= csv.writer(csv_file)
+		for row in info_holder:
+		
+			if row[0].lower() == weekday_today.lower():
+				row_update = [row[0], row[1] , time_today , row[3],row[4]]
+				csv_writer.writerow(row_update)
+			else:
+				csv_writer.writerow(row)
+	
 
 def main():
 
@@ -95,11 +171,14 @@ def main():
 	#Reads Existing Timesheet
 	
 	#write_day(info_holder,'Monday')
+	#write_new()
 	
+	#checkin()
+	#checkout()
+	#write_day('Saturday', '09:00','09:00','n')
 	update_total_hours()
 	display_timesheet()
-	#print ('Hello')
-
+	
 if __name__ == '__main__':
 	main()
 
